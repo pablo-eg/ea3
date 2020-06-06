@@ -8,6 +8,7 @@ import  math
 
 import scipy                  # http://scipy.org/
 from scipy import constants
+from scipy import signal
 
 import matplotlib.pyplot as plt
 from IPython.display import Image
@@ -26,19 +27,24 @@ R = 12000
 #Capacitor
 C = 100e-9
 
-#Frecuencia
-f = np.linspace(1,1e6,1000000)
-w = 2*np.pi*f
+#Constante de tiempo
+T = R*C
 
-#Función de transferencia
-h = 1 / (1 + w*1j*R*C)
+#Función de transferencia  1/ (1 + sT)
+sys = signal.TransferFunction([1], [T, 1])
+print("Zeros {}".format(sys.zeros))
+print("Poles {}".format(sys.poles))
 
-plt.plot(f, np.abs(h))
-plt.xscale('log')
+#Bode
+w, mag, phase = sys.bode()
+
+plt.figure()
+plt.title("Bode")
+plt.semilogx(w/6.283, mag)    # Bode en hz
 plt.xlabel('Frecuencia [hz]')
-plt.ylabel('Amplitud')
+plt.ylabel('[dB]')
 plt.grid()
+#plt.figure()
+#plt.title("Phase")
+#plt.semilogx(w, phase)  # Bode phase plot
 plt.show()
-
-#Salida filtro pasa bajo
-#print('\n\nLa salida del filtro pasa bajo será: {:.4f}'.format(0.5*np.sin(p1-p2)))
